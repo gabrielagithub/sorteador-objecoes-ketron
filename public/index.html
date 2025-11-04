@@ -1,59 +1,206 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sorteador de Objeções — Ketron</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="wrap">
-    <header class="top">
-      <img src="KetronLogo.png" alt="Ketron" class="logo" />
-      <div class="titles">
-        <h1>Sorteador de Objeções</h1>
-        <p class="subtitle">Minimal · ciano · magenta · roxo · azul-marinho</p>
-      </div>
-    </header>
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sorteador de Objeções - Ketron</title>
 
-    <main class="main">
-      <section class="left card">
-        <label class="label">Adicionar nova objeção</label>
-        <input id="inputObje" type="text" placeholder="Ex: Está caro" class="input" />
-        <div class="row">
-          <button id="btnAdd" class="btn primary">Salvar</button>
-          <button id="btnBulk" class="btn ghost">Adicionar em lote</button>
-        </div>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries&_v=1.1"></script>
 
-        <div class="spacer"></div>
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
-        <label class="label">Sorteio</label>
-        <div class="row">
-          <button id="btnSortear" class="btn gradient">Sortear Objeção</button>
-          <button id="btnRefresh" class="btn ghost">Atualizar</button>
-        </div>
+    <!-- Tailwind config -->
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#00FFFF", // Cyan
+              secondary: "#FF00FF", // Magenta
+              tertiary: "#8A2BE2", // Purple
+              "text-primary": "#000080", // Navy Blue
+              "background-light": "#F8F9FA",
+              "background-dark": "#102222",
+              destructive: "#E11D48"
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"]
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+              lg: "0.75rem",
+              xl: "1rem",
+              full: "9999px"
+            },
+          },
+        },
+      }
+    </script>
 
-        <div id="resultado" class="resultado">Nenhuma objeção sorteada</div>
-      </section>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+      }
+    </style>
+  </head>
+  <body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
 
-      <aside class="right card">
-        <div class="header-list">
-          <strong>Objeções salvas</strong>
-          <span id="count" class="count">0</span>
-        </div>
+      <!-- Top Bar -->
+      <header class="flex items-center bg-background-light dark:bg-background-dark p-4 shadow-sm sticky top-0 z-10">
+        <img src="public/logo-ketron.png" alt="Logo Ketron" class="h-10 mr-3 rounded-lg"/>
+        <h1 class="text-text-primary dark:text-background-light text-xl font-bold flex-1 text-center pr-10">Sorteador de Objeções</h1>
+      </header>
 
-        <div id="lista" class="list"></div>
+      <main class="flex flex-col gap-8 px-4 py-6">
+        <!-- Exibição da objeção sorteada -->
+        <section>
+          <div class="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+            <div class="flex flex-col items-center justify-center text-center py-4">
+              <p class="text-text-primary dark:text-background-light text-lg font-bold">Sua Objeção Sorteada</p>
+              <p id="objectionDisplay" class="text-gray-500 dark:text-gray-400 text-base mt-2 min-h-[48px]">
+                Clique em “Sortear” para começar.
+              </p>
+            </div>
+          </div>
+        </section>
 
-        <div class="row bottom">
-          <button id="btnExport" class="btn ghost">Exportar .txt</button>
-          <button id="btnClear" class="btn ghost">Limpar</button>
-        </div>
-      </aside>
-    </main>
+        <!-- Botões principais -->
+        <section class="flex items-center gap-3">
+          <button id="drawBtn" class="flex flex-1 h-14 items-center justify-center gap-2 rounded-lg bg-primary text-text-primary font-bold hover:opacity-90 transition">
+            <span class="material-symbols-outlined">casino</span>
+            <span>Sortear Objeção</span>
+          </button>
+          <button id="refreshBtn" aria-label="Limpar sorteio" class="flex size-14 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-text-primary hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+            <span class="material-symbols-outlined">refresh</span>
+          </button>
+        </section>
 
-    <footer class="foot">Ketron Soluções em TI</footer>
-  </div>
+        <div class="border-t border-gray-200 dark:border-gray-700"></div>
 
-<script src="script.js"></script>
-</body>
+        <!-- Adicionar objeção -->
+        <section class="flex flex-col gap-4">
+          <h2 class="text-text-primary dark:text-background-light text-2xl font-bold">Adicionar Objeção</h2>
+          <div class="flex flex-col gap-4">
+            <label class="flex flex-col w-full">
+              <p class="text-text-primary dark:text-background-light text-base font-medium pb-2">Nova Objeção</p>
+              <input id="newObjection" type="text" class="form-input rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-text-primary dark:text-background-light h-14 p-4" placeholder="Digite uma nova objeção...">
+            </label>
+            <div class="flex gap-3 flex-wrap">
+              <button id="saveBtn" class="flex-1 h-12 rounded-lg bg-secondary text-white font-bold hover:opacity-90 transition">Salvar</button>
+              <button id="batchBtn" class="flex-1 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-primary hover:bg-gray-300 dark:hover:bg-gray-600 transition">Adicionar em lote</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="border-t border-gray-200 dark:border-gray-700"></div>
+
+        <!-- Lista -->
+        <section class="flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-text-primary dark:text-background-light text-2xl font-bold">Minhas Objeções</h2>
+            <span id="countBadge" class="inline-flex items-center justify-center rounded-full bg-tertiary px-3 py-1 text-sm font-bold text-white">0</span>
+          </div>
+
+          <div id="objectionList" class="flex flex-col gap-2"></div>
+
+          <div class="flex gap-3 flex-wrap justify-start pt-2">
+            <button id="exportBtn" class="flex-1 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-primary hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-xl">download</span>
+              <span>Exportar .txt</span>
+            </button>
+            <button id="clearBtn" class="flex-1 h-12 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-xl">delete</span>
+              <span>Limpar Tudo</span>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Script funcional -->
+    <script>
+      const drawBtn = document.getElementById('drawBtn');
+      const refreshBtn = document.getElementById('refreshBtn');
+      const saveBtn = document.getElementById('saveBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const exportBtn = document.getElementById('exportBtn');
+      const newObjection = document.getElementById('newObjection');
+      const objectionDisplay = document.getElementById('objectionDisplay');
+      const objectionList = document.getElementById('objectionList');
+      const countBadge = document.getElementById('countBadge');
+
+      let objections = JSON.parse(localStorage.getItem('objections')) || [];
+
+      function renderList() {
+        objectionList.innerHTML = '';
+        objections.forEach((obj, index) => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow';
+          div.innerHTML = \`<span class="text-gray-400 font-bold mr-4">\${index + 1}.</span><p class="flex-1 text-text-primary">\${obj}</p>\`;
+          objectionList.appendChild(div);
+        });
+        countBadge.textContent = objections.length;
+      }
+
+      drawBtn.addEventListener('click', () => {
+        if (objections.length === 0) {
+          objectionDisplay.textContent = 'Nenhuma objeção cadastrada.';
+          return;
+        }
+        const random = objections[Math.floor(Math.random() * objections.length)];
+        objectionDisplay.textContent = '"' + random + '"';
+      });
+
+      refreshBtn.addEventListener('click', () => {
+        objectionDisplay.textContent = 'Clique em “Sortear” para começar.';
+      });
+
+      saveBtn.addEventListener('click', () => {
+        const text = newObjection.value.trim();
+        if (text) {
+          objections.push(text);
+          localStorage.setItem('objections', JSON.stringify(objections));
+          newObjection.value = '';
+          renderList();
+        }
+      });
+
+      clearBtn.addEventListener('click', () => {
+        if (confirm('Deseja realmente apagar todas as objeções?')) {
+          objections = [];
+          localStorage.removeItem('objections');
+          renderList();
+          objectionDisplay.textContent = 'Clique em “Sortear” para começar.';
+        }
+      });
+
+      exportBtn.addEventListener('click', () => {
+        if (objections.length === 0) {
+          alert('Não há objeções para exportar.');
+          return;
+        }
+        const blob = new Blob([objections.join('\\n')], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'objeções.txt';
+        a.click();
+      });
+
+      renderList();
+    </script>
+  </body>
 </html>
