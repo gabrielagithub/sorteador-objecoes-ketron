@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sorteador de Objeções — Ketron</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <img src="KetronLogo.png" alt="Ketron" class="logo" />
+      <div class="titles">
+        <h1>Sorteador de Objeções</h1>
+        <p class="subtitle">Minimal · ciano · magenta · roxo · azul-marinho</p>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="left card">
+        <label class="label">Adicionar nova objeção</label>
+        <input id="inputObje" type="text" placeholder="Ex: Está caro" class="input" />
+        <div class="row">
+          <button id="btnAdd" class="btn primary">Salvar</button>
+          <button id="btnBulk" class="btn ghost">Adicionar em lote</button>
+        </div>
+
+        <div class="spacer"></div>
+
+        <label class="label">Sorteio</label>
+        <div class="row">
+          <button id="btnSortear" class="btn gradient">Sortear Objeção</button>
+          <button id="btnRefresh" class="btn ghost">Atualizar</button>
+        </div>
+
+        <div id="resultado" class="resultado">Nenhuma objeção sorteada</div>
+      </section>
+
+      <aside class="right card">
+        <div class="header-list">
+          <strong>Objeções salvas</strong>
+          <span id="count" class="count">0</span>
+        </div>
+
+        <div id="lista" class="list"></div>
+
+        <div class="row bottom">
+          <button id="btnExport" class="btn ghost">Exportar .txt</button>
+          <button id="btnClear" class="btn ghost">Limpar</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="foot">Ketron Soluções em TI</footer>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
